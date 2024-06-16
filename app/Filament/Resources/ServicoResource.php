@@ -19,7 +19,7 @@ class ServicoResource extends Resource
 
     protected static ?string $modelLabel = 'Serviço';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-cog';
 
     public static function form(Form $form): Form
     {

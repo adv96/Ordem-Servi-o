@@ -22,7 +22,12 @@ class OSResource extends Resource
 
     protected static ?string $modelLabel = 'Ordem de Serviço';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     public static function form(Form $form): Form
     {
@@ -31,13 +36,31 @@ class OSResource extends Resource
                 Forms\Components\Select::make('cliente_id')
                     ->relationship('cliente', 'name')
                     ->required(),
+                Forms\Components\Select::make('cliente_id')
+                    ->label('Endereço')
+                    ->relationship('cliente', 'endereco')
+                    ->required(),
+                Forms\Components\Select::make('cliente_id')
+                    ->label('E-mail')
+                    ->relationship('cliente', 'email')
+                    ->required(),
+                Forms\Components\Select::make('cliente_id')
+                    ->label('CPF')
+                    ->relationship('cliente', 'cpf')
+                    ->required(),
+                Forms\Components\Select::make('cliente_id')
+                    ->label('Telefone:')
+                    ->relationship('cliente', 'telefone')
+                    ->required(),
                 Forms\Components\Select::make('servico_id')
                     ->relationship('servico', 'name')
                     ->required(),
-                Forms\Components\TextInput::make('descricao')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\RichEditor::make('descricao')
+                    ->label('Descrição')
+                    ->maxLength(50000)
+                    ->required(),
                 Forms\Components\TextInput::make('preco')
+                    ->label('Preço')
                     ->required()
                     ->numeric(),
             ]);
@@ -50,6 +73,22 @@ class OSResource extends Resource
                 Tables\Columns\TextColumn::make('cliente.name')
                     ->numeric()
                     ->sortable(),
+                //Tables\Columns\TextColumn::make('cliente.endereco')
+                 //   ->label('Endereço')
+                 //   ->numeric()
+                 //   ->sortable(),
+              //  Tables\Columns\TextColumn::make('cliente.email')
+                //    ->label('Email')
+                //    ->numeric()
+                //   ->sortable(),
+               // Tables\Columns\TextColumn::make('cliente.cpf')
+                //    ->label('CPF')
+                //    ->numeric()
+                //    ->sortable(),
+               // Tables\Columns\TextColumn::make('cliente.telefone')
+                 //   ->label('Telefone')
+                 //   ->numeric()
+                 //   ->sortable(),
                 Tables\Columns\TextColumn::make('servico.name')
                     ->label('Serviço')
                     ->numeric()
