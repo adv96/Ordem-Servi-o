@@ -15,6 +15,7 @@ use Filament\Tables\Table;
 use Leandrocfe\FilamentPtbrFormFields\Document;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\TextInput;
 
 class ClienteResource extends Resource
 {
@@ -37,12 +38,15 @@ class ClienteResource extends Resource
                Forms\Components\Fieldset::make('Cadastrar Cliente')->schema([
 
                 Forms\Components\TextInput::make('name')
+                    ->label('Nome')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('endereco')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
+                    ->prefix('https://')
+                    ->suffix('.com')
                     ->email()
                     ->required()
                     ->maxLength(255),

@@ -50,9 +50,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationItems([
                 NavigationItem::make('Links externo')
-                    ->url('https://github.com/adv96/System-Patrocinio')
+                    ->url('https://github.com/adv96/Ordem-Servico')
                     ->icon('heroicon-o-link')
-                    ->group('Fornecedores')
+                    ->group('Programador')
                     ->sort(5)
                     ->openUrlInNewTab()
             ])

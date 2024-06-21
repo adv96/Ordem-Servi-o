@@ -4,33 +4,43 @@ namespace App\Filament\Widgets;
 
 use App\Models\OS;
 use Filament\Widgets\ChartWidget;
-use Flowframe\Trend\Trend;
-use Flowframe\Trend\TrendValue;
 
 class BlogPostsChart extends ChartWidget
 {
-    protected static ?string $heading = 'Chart';
+    protected static ?string $heading = 'Ordem de Serviço'; // Update the heading as needed
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 3;
 
     protected function getData(): array
     {
-        
+        // Fetch data from your OS model dynamically
+        $osData = OS::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+                     ->groupBy('month')
+                     ->orderBy('month')
+                     ->get();
+
+        // Prepare data for chart datasets and labels
+        $datasets = [
+            [
+                'label' => 'Número de Ordem de Serviços Creadas',
+                'data' => $osData->pluck('count')->toArray(), // Extract 'count' values as an array
+            ]
+        ];
+
+        $labels = $osData->pluck('month')->map(function ($month) {
+            return date('M', mktime(0, 0, 0, $month, 1));
+        })->toArray(); // Convert month number to month abbreviation (e.g., Jan, Feb, etc.)
+
         return [
-            'datasets' => [
-                [
-                    'label' => 'Blog posts created',
-                    'data' => [0, 10, 5, 2, 21, 32, 45, 74, 65, 45, 77, 89],
-                ],
-            ],
-            'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            'datasets' => $datasets,
+            'labels' => $labels,
         ];
     }
- 
+
     protected function getType(): string
     {
-        return 'bar';
+        return 'bar'; // Set the chart type (bar, line, pie, etc.)
     }
 }
