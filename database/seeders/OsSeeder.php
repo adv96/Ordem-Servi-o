@@ -30,7 +30,7 @@ class OsSeeder extends Seeder
               'cliente_id' => Cliente::all()->random(),
               'servico_id' => Servico::all()->random(),
               'descricao' => fake()->text(),
-              'preco' => fake()->randomFloat(2,0,2000),
+             // 'preco' => fake()->randomFloat(2,0,2000),
          ]);
   
     

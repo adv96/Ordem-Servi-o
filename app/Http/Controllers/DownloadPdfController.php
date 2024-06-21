@@ -36,6 +36,7 @@ class DownloadPdfController extends Controller
 
         */
 
+        $total = $record->quantidade * $record->servico->valor;
 
         $cliente = $record->cliente;
         $data = [
@@ -46,7 +47,9 @@ class DownloadPdfController extends Controller
             'telefone' => $cliente->telefone,
             'servico' => $record->servico->name,
             'descricao' => $record->descricao,
-            'preco' => $record->preco,
+            'quantidade' => $record->quantidade,
+            'total' => $total, // Adiciona o total calculad
+            'valor' => $record->servico->valor,
             'created_at' => $record->created_at,
             'updated_at' => $record->updated_at,
         ];

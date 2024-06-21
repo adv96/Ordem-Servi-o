@@ -22,6 +22,7 @@ class ServicoFactory extends Factory
         return [
             
             'name' => $faker->name(),
+            'valor' => fake()->randomFloat(2,0,2000),
         ];
     }
 }

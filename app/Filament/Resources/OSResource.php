@@ -2,10 +2,12 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\ChargeStatusEnum;
 use App\Filament\Resources\OSResource\Pages;
 use App\Filament\Resources\OSResource\RelationManagers;
 use App\Models\Cliente;
 use App\Models\OS;
+use Faker\Core\Number as CoreNumber;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,7 +16,11 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Columns\Summarizers\Sum;
-use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\Action;use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Number;
+
 
 class OSResource extends Resource
 {
@@ -24,16 +30,20 @@ class OSResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard';
 
+    protected static ?string $navigationGroup = 'Área de Ordem de Serviço';
+
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
     }
 
+
     public static function form(Form $form): Form
     {
-        return $form
+        return $form->columns(3)
             ->schema([
-                Forms\Components\Select::make('cliente_id')
+                Forms\Components\Fieldset::make('Dados do Cliente')->schema([
+                    Forms\Components\Select::make('cliente_id')
                     ->relationship('cliente', 'name')
                     ->required(),
                 Forms\Components\Select::make('cliente_id')
@@ -45,25 +55,47 @@ class OSResource extends Resource
                     ->relationship('cliente', 'email')
                     ->required(),
                 Forms\Components\Select::make('cliente_id')
-                    ->label('CPF')
+                    ->label('CPF ou CNPJ')
                     ->relationship('cliente', 'cpf')
                     ->required(),
                 Forms\Components\Select::make('cliente_id')
                     ->label('Telefone:')
                     ->relationship('cliente', 'telefone')
                     ->required(),
+                Forms\Components\TextInput::make('quantidade')
+                    ->label('Quantidade')
+                    ->numeric()
+                    ->required()
+                    ->rules('integer|min:1|max:50')
+                    ->default(1),
+                    
+                Forms\Components\Textarea::make('descricao')
+                    //->columnSpanFull()
+                    //->label('Descrição')
+                    ->maxLength(50000)
+                    ->columns(2)
+                    ->label('Descrição'),
+                
+                Forms\Components\Select::make('status')
+                    ->label('Status')
+                    ->options(ChargeStatusEnum::class)
+                    ->searchable()
+                    ->preload(),
+                ]),
+
+                Forms\Components\Fieldset::make('Dados do Serviço')->schema([
+
                 Forms\Components\Select::make('servico_id')
                     ->relationship('servico', 'name')
                     ->required(),
-                Forms\Components\RichEditor::make('descricao')
-                    ->label('Descrição')
-                    ->maxLength(50000)
+                Forms\Components\Select::make('servico_id')
+                    ->label('Preço:')
+                    ->relationship('servico', 'valor')
                     ->required(),
-                Forms\Components\TextInput::make('preco')
-                    ->label('Preço')
-                    ->required()
-                    ->numeric(),
+                ])
             ]);
+            
+
     }
 
     public static function table(Table $table): Table
@@ -73,10 +105,7 @@ class OSResource extends Resource
                 Tables\Columns\TextColumn::make('cliente.name')
                     ->numeric()
                     ->sortable(),
-                //Tables\Columns\TextColumn::make('cliente.endereco')
-                 //   ->label('Endereço')
-                 //   ->numeric()
-                 //   ->sortable(),
+                //Tables\Columns\TextColumn:'pt_BR'
               //  Tables\Columns\TextColumn::make('cliente.email')
                 //    ->label('Email')
                 //    ->numeric()
@@ -93,20 +122,26 @@ class OSResource extends Resource
                     ->label('Serviço')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('descricao')
-                    ->label('Descrição')
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    //->label('status')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('preco')
+                Tables\Columns\TextColumn::make('servico.valor')
                     ->label('Preço')
+                    ->formatStateUsing(fn (int $state): string => 'R$ ' . number_format($state, 2, ',', '.'))
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('quantidade')
+                    ->label('Qtd de Manutenção')
+                    ->sortable()
                     ->numeric()
-                    ->summarize(sum::make()->label('Total')->numeric( locale: 'nl',))->color('success')
+                    ->summarize(Tables\Columns\Summarizers\Sum::make('quantidade')->label('Total')->numeric())
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('pt_BR')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('pt_BR')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 
@@ -121,6 +156,7 @@ class OSResource extends Resource
                 ->icon('heroicon-o-document-arrow-down')
                 ->url(fn(OS $record): string => route('student.pdf.download', ['record' => $record]))
                 ->openUrlInNewTab(), 
+                
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -128,6 +164,7 @@ class OSResource extends Resource
                 ]),
             ]);
     }
+
 
     public static function getRelations(): array
     {

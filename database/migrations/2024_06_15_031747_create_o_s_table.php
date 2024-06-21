@@ -16,8 +16,9 @@ return new class extends Migration
             $table->foreignId('cliente_id')->constrained()->index()->cascadeOnDelete()->nullable();
             $table->foreignId('servico_id')->constrained()->index()->cascadeOnDelete()->nullable();
 
-            $table->string('descricao');
-            $table->decimal('preco');
+            $table->string('status')->default('pending');
+            $table->string('descricao')->nullable();
+            $table->integer('quantidade')->default(1);
             $table->timestamps();
         });
     }

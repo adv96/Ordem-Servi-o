@@ -8,5 +8,5 @@ Route::get('/', function () {
 });
 
 
-
-Route::get('/download-pdf/{record}', [DownloadPdfController::class, 'downloadPDF'])->name('student.pdf.download');
+//Route::get('/download-pdf/{record}', [DownloadPdfController::class, 'download'])->name('student.pdf.download');
+Route::get('/download-pdf/{record}', [DownloadPdfController::class, 'download'])->name('student.pdf.download');

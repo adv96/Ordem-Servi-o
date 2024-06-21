@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt_BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,13 +23,19 @@
         }
 
         .header img {
-            max-width: 150px;
+            max-width: 120px;
             height: auto;
         }
 
         .header h1 {
-            color: #0056b3;
+            color: #F24F00;
             margin: 0;
+        }
+
+        .header h2 {
+            color: black;
+            margin: 0;
+            font-family: Arial, sans-serif;
         }
 
         p {
@@ -41,87 +47,129 @@
         }
 
         .container {
-            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
             border: 1px solid #ddd;
             border-radius: 10px;
             background-color: #f9f9f9;
+            box-sizing: border-box;
         }
 
-        .field {
-            margin-bottom: 10px;
-        }
-
-        .field label {
-            display: inline-block;
-            width: 150px;
-            font-weight: bold;
-        }
-
-        .field span {
-            display: inline-block;
-            width: calc(100% - 150px);
+        .details {
+            grid-column: span 2; /* A tabela de detalhes ocupa duas colunas */
         }
 
         .footer {
-            margin-top: 20px;
+            grid-column: span 3; /* O rodapé ocupa todas as três colunas */
+            margin-top: 15px;
             text-align: center;
-            font-size: 12px;
-            color: #777;
+            font-size: 9px;
+            color: black;
+        }
+
+        .field-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .field-table th, .field-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .field-table th {
+            background-color: #f2f2f2;
+        }
+
+        @media print {
+            @page {
+                size: A4;
+                margin: 20mm;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                border: none;
+            }
         }
     </style>
 </head>
 <body>
-<div class="container">
+    <div class="container">
         <div class="header">
             <img src="image/1.png" alt="Logo da Empresa">
             <h1>Ordem de Serviço</h1>
+            <div class="company-details">
+                <h2>TANAMÃO System Ltda</h2>
+                <p>Pça quinto Ruas N: 190</p>
+                <p>Telefone: (33) 98710-4637</p>
+                <p>Email: tanamao55@gmail.com</p>
+            </div>
         </div>
-        <div class="field">
-            <label>Cliente:</label>
-            <span>{{ $cliente }}</span>
+        
+        <div class="details">
+            <table class="field-table">
+                <tr>
+                    <th>Cliente:</th>
+                    <td>{{ $cliente }}</td>
+                </tr>
+                <tr>
+                    <th>Endereço:</th>
+                    <td>{{ $endereco }}</td>
+                </tr>
+                <tr>
+                    <th>E-mail:</th>
+                    <td>{{ $email }}</td>
+                </tr>
+                <tr>
+                    <th>Documento:</th>
+                    <td>{{ $cpf }}</td>
+                </tr>
+                <tr>
+                    <th>Telefone:</th>
+                    <td>{{ $telefone }}</td>
+                </tr>
+                <tr>
+                    <th>Serviço:</th>
+                    <td>{{ $servico }}</td>
+                </tr>
+                <tr>
+                    <th>Descrição:</th>
+                    <td>{{ $descricao }}</td>
+                </tr>
+                <tr>
+                    <th>Quantidade de Serviços:</th>
+                    <td>{{ $quantidade }}</td>
+                </tr>
+                <tr>
+                    <th>Preço:</th>
+                    <td>R$ {{ number_format($valor, 2, ',', '.') }}</td>
+                </tr>
+                <tr>
+                    <th>Valor Total:</th>
+                    <td>R$ {{ number_format($total, 2, ',', '.') }}</td>
+                </tr>
+                <tr>
+                    <th>Atualizado em:</th>
+                    <td>{{ $updated_at->format('d/m/Y H:i') }}</td>
+                </tr>
+            </table>
         </div>
-        <div class="field">
-            <label>Endereço:</label>
-            <span>{{ $endereco }}</span>
+
+        <div class="footer">
+            <p>Assinatura do Cliente: _______________________________</p>
+            <p>Assinatura do Técnico: _______________________________</p>
+            <p>&copy; {{ date('Y') }} TANAMÃO System. Todos os direitos reservados.</p>
         </div>
-        <div class="field">
-            <label>E-mail:</label>
-            <span>{{ $email }}</span>
-        </div>
-        <div class="field">
-            <label>CPF:</label>
-            <span>{{ $cpf }}</span>
-        </div>
-        <div class="field">
-            <label>Telefone:</label>
-            <span>{{ $telefone }}</span>
-        </div>
-        <div class="field">
-            <label>Serviço:</label>
-            <span>{{ $servico }}</span>
-        </div>
-        <div class="field">
-            <label>Descrição:</label>
-            <span>{{ $descricao }}</span>
-        </div>
-        <div class="field">
-            <label>Preço:</label>
-            <span>R$ {{ number_format($preco, 2, ',', '.') }}</span>
-        </div>
-        <div class="field">
-            <label>Criado em:</label>
-            <span>{{ $created_at->format('d/m/Y H:i') }}</span>
-        </div>
-        <div class="field">
-            <label>Atualizado em:</label>
-            <span>{{ $updated_at->format('d/m/Y H:i') }}</span>
-        </div>
-    </div>
-    <div class="footer">
-        <p>&copy; {{ date('Y') }} TANAMÃO System. Todos os direitos reservados.</p>
     </div>
 </body>
 </html>

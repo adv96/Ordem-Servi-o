@@ -26,7 +26,7 @@ class OSFactory extends Factory
             'servico_id' => Servico::factory()->create(),
             
             'descricao' => fake()->text(),
-            'preco' => fake()->randomFloat(2,0,2000),
+            //'preco' => fake()->randomFloat(2,0,2000),
            
         ];
     }

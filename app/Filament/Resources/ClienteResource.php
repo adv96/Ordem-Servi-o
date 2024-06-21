@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Leandrocfe\FilamentPtbrFormFields\Document;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -32,6 +33,9 @@ class ClienteResource extends Resource
     {
         return $form
             ->schema([
+
+               Forms\Components\Fieldset::make('Cadastrar Cliente')->schema([
+
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
@@ -42,13 +46,19 @@ class ClienteResource extends Resource
                     ->email()
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('cpf')
+                Document::make('cpf')
+                    ->label('CPF ou CNPJ')
+                    ->dynamic()
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('telefone')
                     ->tel()
+                    ->mask('(99) 99999-9999')
+                    ->placeholder('(99) 99999-9999')
                     ->required()
                     ->maxLength(255),
+
+               ])
             ]);
     }
 
@@ -65,15 +75,16 @@ class ClienteResource extends Resource
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('cpf')
+                    ->label('Documento')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('telefone')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('pt_BR')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('pt_BR')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

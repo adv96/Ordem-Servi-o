@@ -8,10 +8,12 @@ use App\Models\Servico;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Number;
 
 class ServicoResource extends Resource
 {
@@ -25,10 +27,18 @@ class ServicoResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+           
+                Forms\Components\Fieldset::make('Cadastrar Serviços')->schema([
+                     Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('valor')
+                    ->default('0,00')
+                    ->required()
+                    ->maxLength(255)
+                ])
             ]);
+            
     }
 
     public static function table(Table $table): Table
@@ -36,6 +46,11 @@ class ServicoResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Nome')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('valor')
+                    ->formatStateUsing(fn (int $state): string => 'R$ ' . number_format($state, 2, ',', '.'))
+                    ->summarize(sum::make()->label(' R$ Total')->numeric( locale: 'nl',))->color('success')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -51,6 +66,7 @@ class ServicoResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
